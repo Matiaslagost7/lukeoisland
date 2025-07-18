@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lukeo Island - Minecraft</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #7ec4ff;
+            overflow-x: hidden;
+            background: linear-gradient(to bottom, #7ec4ff 0%, #1a6fc9 100%);
+            min-height: 100vh;
+        }
+
+        .world-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sky {
+            width: 100%;
+            height: 60vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        .island-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: -50px;
+        }
+
+        .island {
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .title-container {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 4px 4px 0 #000, -4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .minecraft-button {
+            background-color: #3a3a3a;
+            color: white;
+            border: 4px solid #000;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            position: relative;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.1s;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .minecraft-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .minecraft-button:active {
+            transform: translateY(0);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .grass-block {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #5c8d2d 0%, #6aa430 100%);
+            border: 4px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tree {
+            position: absolute;
+            width: 40px;
+            height: 100px;
+            background: linear-gradient(135deg, #6b4a3a 0%, #5c3f32 100%);
+            border: 4px solid #000;
+            top: -20px;
+        }
+
+        .leaves {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2d8d2d 0%, #3aa430 100%);
+            border: 4px solid #000;
+            border-radius: 50%;
+            top: -60px;
+            left: -20px;
+        }
+
+        .water {
+            width: 100%;
+            height: 5vh;
+            background-color: #3a76b4;
+            position: absolute;
+            bottom: 0;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .minecraft-button {
+                padding: 8px 16px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="world-container">
+        <div class="sky" id="sky">
+            <!-- Clouds will be generated with JS -->
+        </div>
+        
+        <div class="title-container">
+            <h1>Bienvenido a Lukeo Island</h1>
+            <p style="color: white; text-shadow: 2px 2px 0 #000; font-size: 1.2rem;">¡Explora la isla más épica en el mundo de Minecraft!</p>
+            
+            <div class="buttons">
+                <button class="minecraft-button">Explorar</button>
+                <button class="minecraft-button">Construir</button>
+                <button class="minecraft-button">Jugar</button>
+            </div>
+        </div>
+        
+        <div class="island-container">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d091278c-da82-4707-a9f7-79362aebd644.png" alt="Isla estilo Minecraft con bioma variado, mostrando bloques de hierba, árboles pixelados, un pequeño lago y montañas en el fondo con estilo de píxeles" class="island" id="island-image">
+        </div>
+        
+        <div class="water"></div>
+    </div>
+
+    <script>
+        // Generate random clouds
+        function generateClouds() {
+            const sky = document.getElementById('sky');
+            const cloudCount = Math.floor(window.innerWidth / 100);
+            
+            for (let i = 0; i < cloudCount; i++) {
+                const cloud = document.createElement('div');
+                cloud.classList.add('cloud');
+                
+                const size = Math.random() * 100 + 50;
+                const left = Math.random() * window.innerWidth;
+                const top = Math.random() * 200;
+                const opacity = Math.random() * 0.5 + 0.3;
+                const duration = Math.random() * 30 + 30;
+                
+                cloud.style.width = `${size}px`;
+                cloud.style.height = `${size/2}px`;
+                cloud.style.left = `${left}px`;
+                cloud.style.top = `${top}px`;
+                cloud.style.opacity = opacity;
+                cloud.style.animation = `float ${duration}s linear infinite`;
+                cloud.style.animationDelay = `${Math.random() * 20}s`;
+                
+                sky.appendChild(cloud);
+            }
+        }
+        
+        // Generate some random blocks
+        function generateBlocks() {
+            const container = document.querySelector('.island-container');
+            
+            // Generate some grass blocks
+            for (let i = 0; i < 10; i++) {
+                const block = document.createElement('div');
+                block.classList.add('grass-block');
+                
+                const left = Math.random() * window.innerWidth;
+                const bottom = Math.random() * 100 + 50;
+                
+                block.style.left = `${left}px`;
+                block.style.bottom = `${bottom}px`;
+                
+                // Sometimes make a tree
+                if (Math.random() > 0.7) {
+                    const tree = document.createElement('div');
+                    tree.classList.add('tree');
+                    
+                    const leaves = document.createElement('div');
+                    leaves.classList.add('leaves');
+                    
+                    block.appendChild(tree);
+                    block.appendChild(leaves);
+                }
+                
+                container.appendChild(block);
+            }
+        }
+        
+        // Make island image more interactive
+        function setupIsland() {
+            const island = document.getElementById('island-image');
+            
+            island.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                island.style.transform = `perspective(1000px) rotateX(${(y - 0.5) * 5}deg) rotateY(${(x - 0.5) * 5}deg)`;
+            });
+            
+            island.addEventListener('mouseleave', () => {
+                island.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+            });
+        }
+        
+        // Initialize everything when page loads
+        window.addEventListener('load', () => {
+            generateClouds();
+            generateBlocks();
+            setupIsland();
+        });
+    </script>
+</body>
+</html>
